@@ -1,6 +1,10 @@
 LHL Midterm - Resource Wall - "devTips"
 =========
 
+## Overview
+
+DevTips is a website where everybody can share code snippets or links to articles, blogs, videos.
+
 ## Main Features
 
 1. Home

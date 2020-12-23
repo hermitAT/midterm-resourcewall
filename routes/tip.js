@@ -41,7 +41,7 @@ module.exports = (db) => {
       const tip = result[0].rows[0];
       let comments = result[1].rows;
       if (comments) comments.map(comment => comment.created_at = tipHelp.timeAgo(comment.created_at));
-      res.render('tip', { tip_id, tip, comments });
+      res.json({ tip_id, tip, comments });
     });
   });
 
@@ -53,7 +53,7 @@ module.exports = (db) => {
   */
   router.post("/:tip_id/bookmark", (req, res) => {
 
-    const values = [res.locals.user.id, req.body.tip_id];
+    const values = [req.body.user_id, req.params.tip_id];
 
     tipHelp.setBookmark(values)
       .then(data => res.json({ success: true }))
@@ -66,7 +66,7 @@ module.exports = (db) => {
   */
   router.delete("/:tip_id/bookmark", (req, res) => {
 
-    const values = [res.locals.user.id, req.body.tip_id];
+    const values = [req.body.user_id, req.params.tip_id];
 
     tipHelp.unsetBookmark(values)
       .then(data => res.json({ success: true }))
@@ -81,7 +81,7 @@ module.exports = (db) => {
   */
   router.post("/:tip_id/like", (req, res) => {
 
-    let values = [res.locals.user.id, req.body.tip_id];
+    let values = [req.body.user_id, req.params.tip_id];
 
     tipHelp.setLike(values)
       .then(data => res.json({ success: true }))
@@ -94,7 +94,7 @@ module.exports = (db) => {
   */
   router.delete("/:tip_id/like", (req, res) => {
 
-    let values = [res.locals.user.id, req.body.tip_id];
+    let values = [req.body.user.id, req.params.tip_id];
 
     tipHelp.unsetLike(values)
       .then(data => res.json({ success: true }))
@@ -109,11 +109,10 @@ module.exports = (db) => {
   */
   router.post('/:tip_id/comment', (req, res) => {
 
-    const values = [res.locals.user.id, req.params.tip_id, req.body.comment];
+    const values = [req.body.user_id, req.params.tip_id, req.body.comment];
 
     tipHelp.addComment(values)
       .then(data => {
-        data.name = res.locals.user.name;
         res.json(data)
       })
       .catch(err => res.json({ success: false, error: err }));
@@ -123,9 +122,9 @@ module.exports = (db) => {
   * (should be DELETE req) POST req to delete a comment with the selected id
   * must add user authentication !!!
   */
-  router.post('/:tip_id/comment/:id/delete', (req, res) => {
+  router.delete('/:tip_id/comment/:id', (req, res) => {
 
-    const values = [req.params.id, req.params.tip_id, res.locals.user.id];
+    const values = [req.params.id, req.params.tip_id, req.body.user_id];
 
     tipHelp.deleteComment(values)
       .then(data => res.json({ success: true }))
@@ -136,9 +135,9 @@ module.exports = (db) => {
   * (should be PUT req) POST req to edit an existing comment, user can only edit the 'text' of the comment.
   * must add user authentication !!!
   */
-  router.post('/:tip_id/comment/:id', (req, res) => {
+  router.put('/:tip_id/comment/:id', (req, res) => {
 
-    const values = [req.body.comment, req.params.id, req.body.tip_id, res.locals.user.id];
+    const values = [req.body.comment, req.params.id, req.params.tip_id, req.body.user_id];
 
     tipHelp.editComment(values)
       .then(data => res.json(data))
@@ -151,9 +150,9 @@ module.exports = (db) => {
   * (should be DELETE) POST req to remove a tip from the resources table
   * must add user authentication !!!
   */
-  router.post("/:tip_id/delete", (req, res) => {
+  router.delete("/:tip_id", (req, res) => {
 
-    const values = [req.params.tip_id, res.locals.user.id];
+    const values = [req.params.tip_id, req.body.user_id];
 
     tipHelp.deleteTip(values)
       .then(data => res.json({ success: true }))
@@ -166,11 +165,11 @@ module.exports = (db) => {
   * (should be PUT req) POST request to edit an existing tip, user can only edit title and description
   * must add user authentication !!!
   */
-  router.post("/:tip_id", (req, res) => {
-    const values = [req.body.title, req.body.description, req.params.tip_id, res.locals.user.id];
+  router.put("/:tip_id", (req, res) => {
+    const values = [req.body.title, req.body.description, req.params.tip_id, req.body.user_id];
 
     tipHelp.editTip(values)
-      .then(data => res.json({ success: true }))
+      .then(data => res.json({ data }))
       .catch(err => res.json({ success: false, error: err.message }));
   });
 

@@ -86,7 +86,7 @@ const homeRoutes = require("./routes/home");
 // Note: Feel free to replace the example routes below with your own
 app.use("/search", searchRoutes(db));
 app.use("/user", userRoutes(db));
-app.use("/tip", tipRoutes(db));
+app.use("/tips", tipRoutes(db));
 app.use("/", homeRoutes(db));
 
 // ----- Main Error catching can go here -----

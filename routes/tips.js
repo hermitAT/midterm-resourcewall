@@ -10,24 +10,33 @@ const tipHelp = require('../db/helpers/tip-help');
 
 module.exports = (db) => {
 
+
   // load tips data for an array of Tip IDs
-  router.post("/", (req, res) => {
-    const userID = res.locals.user.id;
-    const { tipsID } = req.body;
-    tipHelp.getResourceFullData(tipsID, userID)
-      .then((tips) => res.json(tips));
+  router.get("/", (req, res) => {
+
+    const tipIDs = JSON.parse(req.query.tipIDs);
+    const userID = req.query.userID || null;
+
+    tipHelp.getResourceFullData(tipIDs, userID)
+      .then(data => res.json(data))
+      .catch(err => err);
+
   });
+
 
   // Get list of all Tip IDs in the DB
   router.get("/all", (req, res) => {
+
     tipHelp.getAllTipIDs()
       .then((tips) => res.json(tips));
   });
+
 
   /*
   * render 'tip' EJS page, passing thru the given tipId
   *
   */
+  /*
   router.get("/:tip_id", (req, res) => {
     const tip_id = req.params.tip_id;
     const tipQueryString = 'SELECT * , r.id AS resource_id FROM resources AS r JOIN users AS u ON u.id = r.creator_id WHERE r.id = $1;';
@@ -44,6 +53,18 @@ module.exports = (db) => {
       res.render('tip', { tip_id, tip, comments });
     });
   });
+  */
+
+  router.get("/:tip_id", (req, res) => {
+
+    const tip_id = req.params.tip_id;
+    const userID = req.query.userID || null;
+    Promise.all([
+      tipHelp.getResourceFullData([tip_id], userID),
+      tipHelp.getResourceComments([tip_id])
+    ])
+      .then(data => res.json(data))
+  })
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ bookmark routes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

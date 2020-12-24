@@ -4,8 +4,8 @@
  */
 
 const express = require('express');
-const router  = express.Router();
-const searchHelp  = require('../db/helpers/search-help');
+const router = express.Router();
+const searchHelp = require('../db/helpers/search-help');
 const querystring = require('querystring');
 
 module.exports = () => {
@@ -18,12 +18,17 @@ module.exports = () => {
   });
 
 
-  router.post("/", (req, res) => {
-    searchHelp.searchByTags(req.body.search)
-      .then((tips) => res.json(tips));
+  router.get("/", (req, res) => {
+
+    const tags = JSON.parse(req.query.tags);
+
+    searchHelp.searchByTags(tags)
+      .then(tips => res.json(tips))
+      .catch(err => err);
+
   });
 
-  router.get("/", (req, res) => {
+  router.get("/results", (req, res) => {
     res.render('search');
     // ^^ add { userId } to the render args..
   });

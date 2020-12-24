@@ -69,13 +69,15 @@ exports.getAllTipIDs = getAllTipIDs;
 const getResourceComments = function(arr) {
 
   return Promise.all(arr.map(resource_id => {
+    console.log(resource_id)
     const queryString = `
       SELECT user_id, created_at, edited_at, comment
       FROM comments
-      WHERE resource_id = $1;
+      WHERE resource_id = $1
+      ORDER BY created_at DESC;
     `;
     return query(queryString, [resource_id])
-      .then(res => res.rows[0].count);
+      .then(res => res.rows);
   }));
 };
 exports.getResourceComments = getResourceComments;

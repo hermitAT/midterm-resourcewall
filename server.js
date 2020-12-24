@@ -79,14 +79,14 @@ const checkAuth = function(req, res, err_callback) {
 // Note: Feel free to replace the example routes below with your own
 const searchRoutes = require("./routes/search");
 const userRoutes = require("./routes/user");
-const tipRoutes = require("./routes/tip");
+const tipRoutes = require("./routes/tips");
 const homeRoutes = require("./routes/home");
 
 // Mount all resource routes
 // Note: Feel free to replace the example routes below with your own
 app.use("/search", searchRoutes(db));
 app.use("/user", userRoutes(db));
-app.use("/tip", tipRoutes(db));
+app.use("/tips", tipRoutes(db));
 app.use("/", homeRoutes(db));
 
 // ----- Main Error catching can go here -----

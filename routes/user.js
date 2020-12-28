@@ -5,9 +5,10 @@
  * See: https://expressjs.com/en/guide/using-middleware.html#middleware.router
  */
 
-const express = require('express');
-const router = express.Router();
-const helpers = require('../db/helpers/user-help.js');
+const express   = require('express');
+const router    = express.Router();
+const bcrypt    = require('bcrypt');
+const helpers   = require('../db/helpers/user-help.js');
 
 module.exports = (db) => {
 
@@ -29,20 +30,32 @@ module.exports = (db) => {
   * Log user into app given the check of email against database; getUserByEmail helper does the DB work to return the data
   * Return user object as JSON to client
   */
-  router.post('/login/', (req, res) => {
-    const { email } = req.body;
+  router.post('/login', (req, res) => {
+    const { email, password } = req.body;
     return helpers.findUserByEmail(email)
       .then(user => {
-        if (!user) {
-         return helpers.newUser(email)
-          .then(user => res.json({ user }));
-        } else {
-          res.json({ user })
+        if (helpers.passwordCheck(password, user)) {
+          console.log("Success! User logged in.");3
+          res.json({ user });
         }
       })
       .catch(err => {
         res.status(500).json({ error: err.message });
       });
+  });
+
+  router.post('/register', (req, res) => {
+    const { name, password, email } = req.body;
+    const hashPW = bcrypt.hashSync(password, 12);
+    const userDetails = [name, hashPW, email];
+
+    return helpers.newUser(userDetails)
+      .then(user => {
+        res.json({ user });
+      })
+      .catch(err => {
+        res.status(500).json({ error: err.message });
+      })
   });
 
   return router;

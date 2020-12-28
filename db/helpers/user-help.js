@@ -23,7 +23,7 @@ exports.getAllUsers = getAllUsers;
 const findUserByEmail = (email) => {
 
   queryString = `
-    SELECT id, email
+    SELECT *
     FROM users
     WHERE email = $1;
     `;
@@ -56,18 +56,26 @@ exports.findUserByID = findUserByID;
 * Create a new user object in the database with their provided their name, email and password
 *
 */
-const newUser = (email) => {
+const newUser = (userDetails) => {
   // functionality to add a new user into the database and returning the new user object
 
   queryString = `
-      INSERT INTO users (email)
-      VALUES ($1)
-      RETURNING email, id;
+      INSERT INTO users (name, password, email)
+      VALUES ($1, $2, $3)
+      RETURNING id, name, email;
       `;
 
-  return query(queryString, [email])
+  return query(queryString, userDetails)
     .then(data => data.rows[0])
     .catch(err => console.error('Query error', err.stack));
 
 };
 exports.newUser = newUser;
+
+const passwordCheck = (password, user) => {
+  if (!bcrypt.compareSync(password, user.password)) {
+    return false;
+  }
+  return true;
+};
+exports.passwordCheck = passwordCheck;

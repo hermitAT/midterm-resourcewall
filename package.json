@@ -5,9 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/index.js",
+    "start": "node server.js",
     "local": "./node_modules/.bin/nodemon -L --ignore public/",
-    "reset": "psql -U labber -d midterm < ./src/db/schema/01_schema.sql && psql -U development -d scheduler_development < ./src/db/seeds/*.sql",
     "db:reset": "node bin/resetdb.js"
   },
   "author": "Lighthouse Labs",
@@ -17,11 +16,9 @@
     "body-parser": "^1.19.0",
     "chalk": "^2.4.2",
     "cookie-session": "^1.4.0",
-    "cors": "^2.8.5",
     "dotenv": "^2.0.0",
     "ejs": "^2.6.2",
     "express": "^4.17.1",
-    "helmet": "^4.3.1",
     "morgan": "^1.9.1",
     "node-sass-middleware": "^0.11.0",
     "pg": "^6.4.2",

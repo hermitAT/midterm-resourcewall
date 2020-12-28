@@ -35,7 +35,7 @@ const findUserByEmail = (email) => {
 exports.findUserByEmail = findUserByEmail;
 
 /*
-* Return a user object from database given just the user's ID
+* Return the user object from database with the provided email
 *
 */
 const findUserByID = (id) => {
@@ -44,7 +44,7 @@ const findUserByID = (id) => {
     SELECT *
     FROM users
     WHERE id = $1;
-  `;
+    `;
 
   return query(queryString, [id])
     .then(data => data.rows[0])
@@ -53,34 +53,16 @@ const findUserByID = (id) => {
 exports.findUserByID = findUserByID;
 
 /*
-* Return user object from database given a user 'name'
-*
-*/
-const findUserByName = (name) => {
-
-  queryString = `
-    SELECT *
-    FROM users
-    WHERE name = $1;
-    `;
-
-  return query(queryString, [name])
-    .then(data => data.rows[0])
-    .catch(err => console.error('Query error', err.stack));
-};
-exports.findUserByName = findUserByName;
-
-/*
 * Create a new user object in the database with their provided their name, email and password
 *
 */
 const newUser = (userDetails) => {
-  // functionality to add a new user into the database, hashing the given password, and returning the new user object
+  // functionality to add a new user into the database and returning the new user object
 
   queryString = `
-      INSERT INTO users (name, email, password)
+      INSERT INTO users (name, password, email)
       VALUES ($1, $2, $3)
-      RETURNING *;
+      RETURNING id, name, email;
       `;
 
   return query(queryString, userDetails)
@@ -90,46 +72,7 @@ const newUser = (userDetails) => {
 };
 exports.newUser = newUser;
 
-/*
-* Edit details - name, password, and email - for the given user ID
-*
-*/
-const editUser = (userDetails) => {
-
-  queryString = `
-    UPDATE users
-    SET name = $1, password = $2, email = $3
-    WHERE id = $4
-    RETURNING *;
-  `;
-
-  return query(queryString, userDetails)
-    .then(data => data.rows[0])
-    .catch(err => console.error('Query error', err.stack));
-};
-exports.editUser = editUser;
-
-/*
-* Login to the app with provided credentials, if they pass the authentication check
-*
-*/
-const login = (email, password) => {
-  return findUserByEmail(email)
-    .then(data => {
-      if (passwordCheck(password, data)) {
-        return data;
-      }
-    })
-    .catch(err => console.error('Query error', err.stack));
-};
-exports.login = login;
-
-/*
-* Authentication check for a given password and a user object
-*
-*/
 const passwordCheck = (password, user) => {
-
   if (!bcrypt.compareSync(password, user.password)) {
     return false;
   }

@@ -140,6 +140,24 @@ const setLike = (values) => {
 exports.setLike = setLike;
 
 /*
+* Flip the boolean value within the likes table
+* Params are the active user, the Tip ID, and the given boolean value (0 creates a falsey (dislike), 1 creates a truthy (like))
+
+const setLike = (values) => {
+
+  queryString = `
+  INSERT INTO likes (user_id, resource_id)
+  VALUES ($1, $2);
+  `;
+
+  return query(queryString, values)
+  .then(data => console.log("Success! Like added!"))
+  .catch(err => console.error('Query error', err.stack));
+};
+exports.setLike = setLike;
+*/
+
+/*
 * Removes all likes that have been set for the user/tip pair (if multiple have been created due to seeds, otherwise, etc)
 * Params are the active user and the Tip Id, the Tip Id is the data returned.
 */
@@ -240,7 +258,7 @@ const editComment = (values) => {
   queryString = `
     UPDATE comments
     SET comment = $1, edited_at = Now()
-    WHERE id = $2 AND resource_id = $3, user_id = $4
+    WHERE id = $2 AND resource_id = $3 AND user_id = $4
     RETURNING *;
   `;
 

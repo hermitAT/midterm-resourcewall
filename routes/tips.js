@@ -168,7 +168,7 @@ module.exports = (db) => {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ edit/delete tip routes ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   /*
-  * (should be DELETE) POST req to remove a tip from the resources table
+  * DELETE req to remove a tip from the resources table
   * must add user authentication !!!
   */
   router.delete("/:tip_id", (req, res) => {
@@ -180,18 +180,28 @@ module.exports = (db) => {
       .catch(err => res.json({ success: false, error: err }));
   });
 
-
-
   /*
-  * (should be PUT req) POST request to edit an existing tip, user can only edit title and description
+  * PUT request to edit an existing tip, user can only edit title and description
   * must add user authentication !!!
   */
   router.put("/:tip_id", (req, res) => {
     const values = [req.body.title, req.body.description, req.params.tip_id, req.body.user_id];
 
-    tipHelp.editTip(values)
-      .then(data => res.json({ data }))
-      .catch(err => res.json({ success: false, error: err.message }));
+   tipHelp.editTip(values)
+   .then(data => res.json({ data }))
+   .catch(err => res.json({ success: false, error: err.message }));
+  });
+
+  /*
+  * POST request to edit an existing tip, user can only edit title and description
+  * must add user authentication !!!
+  */
+  router.post("/", (req, res) => {
+   const values = [req.body.data, req.body.title, req.body.description, req.body.type, req.body.user_id];
+
+   tipHelp.addTip(values)
+   .then(data => res.json({ data }))
+   .catch(err => res.json({ success: false, error: err.message }));
   });
 
   return router;

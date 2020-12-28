@@ -82,9 +82,25 @@ const getResourceComments = function(arr) {
 };
 exports.getResourceComments = getResourceComments;
 
-let queryString;
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~ tip modification helpers ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/*
+* Add a new Tip to the DB
+*
+*/
+const addTip = (values) => {
+
+  const queryString = `
+    INSERT INTO resources (data, title, description, type, creator_id)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *;
+  `;
+
+  return query(queryString, values)
+    .then(data => data.rows[0])
+    .catch(err => console.error('Query error', err.stack));
+};
+exports.addTip = addTip;
 
 /*
 * Edit the title & description of a given Tip ID, && edited_at is set to Now(), return the updated Tip object
@@ -92,7 +108,7 @@ let queryString;
 */
 const editTip = (values) => {
 
-  queryString = `
+  const queryString = `
     UPDATE resources
     SET title = $1, description = $2, edited_at = Now()
     WHERE id = $3 AND creator_id = $4
@@ -111,7 +127,7 @@ exports.editTip = editTip;
 */
 const deleteTip = (values) => {
 
-  queryString = `
+  const queryString = `
     DELETE FROM resources
     WHERE id = $1 AND creator_id = $2;
   `;
@@ -130,7 +146,7 @@ exports.deleteTip = deleteTip;
 */
 const setLike = (values) => {
 
-  queryString = `
+  const queryString = `
     INSERT INTO likes (user_id, resource_id)
     VALUES ($1, $2);
     `;
@@ -147,7 +163,7 @@ exports.setLike = setLike;
 
 const setLike = (values) => {
 
-  queryString = `
+  const queryString = `
   INSERT INTO likes (user_id, resource_id)
   VALUES ($1, $2);
   `;
@@ -165,7 +181,7 @@ exports.setLike = setLike;
 */
 const unsetLike = (values) => {
 
-  queryString = `
+  const queryString = `
     DELETE FROM likes
     WHERE user_id = $1 AND resource_id = $2;
   `;
@@ -185,7 +201,7 @@ exports.unsetLike = unsetLike;
 */
 const setBookmark = (values) => {
 
-  queryString = `
+  const queryString = `
     INSERT INTO bookmarks (user_id, resource_id)
     VALUES ($1, $2);
   `;
@@ -202,7 +218,7 @@ exports.setBookmark = setBookmark;
 */
 const unsetBookmark = (values) => {
 
-  queryString = `
+  const queryString = `
     DELETE FROM bookmarks
     WHERE user_id = $1 AND resource_id = $2;
   `;
@@ -222,7 +238,7 @@ exports.unsetBookmark = unsetBookmark;
 */
 const addComment = (values) => {
 
-  queryString = `
+  const queryString = `
     INSERT INTO comments (user_id, resource_id, comment)
     VALUES ($1, $2, $3)
     RETURNING *;
@@ -240,7 +256,7 @@ exports.addComment = addComment;
 */
 const deleteComment = (values) => {
 
-  queryString = `
+  const queryString = `
     DELETE FROM comments
     WHERE id = $1 AND resource_id = $2 AND user_id = $3;
   `;
@@ -257,7 +273,7 @@ exports.deleteComment = deleteComment;
 */
 const editComment = (values) => {
 
-  queryString = `
+  const queryString = `
     UPDATE comments
     SET comment = $1, edited_at = Now()
     WHERE id = $2 AND resource_id = $3 AND user_id = $4

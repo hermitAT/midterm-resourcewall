@@ -37,7 +37,7 @@ app.use(express.static("public"));
 // Note: Feel free to replace the example routes below with your own
 const searchRoutes = require("./routes/search");
 const userRoutes = require("./routes/user");
-const tipRoutes = require("./routes/tip");
+const tipRoutes = require("./routes/tips");
 const homeRoutes = require("./routes/home");
 
 // Mount all resource routes

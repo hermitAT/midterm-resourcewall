@@ -115,7 +115,7 @@ module.exports = (db) => {
   */
   router.delete("/:tip_id/like", (req, res) => {
 
-    let values = [req.body.user.id, req.params.tip_id];
+    let values = [req.body.user_id, req.params.tip_id];
 
     tipHelp.unsetLike(values)
       .then(data => res.json({ success: true }))

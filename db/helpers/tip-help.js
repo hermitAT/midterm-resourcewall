@@ -13,7 +13,7 @@ const { query, extract } = require('../');
  * they liked and/or bookmarked a resource
  * @param {*} [resource_id1,...]
  */
-const getResourceFullData = function(arr, userID) {
+const getResourceFullData = function(arr) {
 
   return Promise.all(arr.map(resource_id => {
     const queryString = `
@@ -35,7 +35,7 @@ const getResourceFullData = function(arr, userID) {
     JOIN users ON creator_id = users.id
     WHERE a.id = $1;
     `;
-    return query(queryString, [resource_id, userID])
+    return query(queryString, [resource_id])
       .then(res => res.rows[0])
       .catch(err => console.log('getResourceFullData', err))
   }));

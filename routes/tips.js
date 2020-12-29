@@ -15,9 +15,9 @@ module.exports = (db) => {
   router.get("/", (req, res) => {
 
     const tipIDs = JSON.parse(req.query.tipIDs);
-    const userID = req.query.userID || null;
+    //const userID = req.query.userID || null;
 
-    tipHelp.getResourceFullData(tipIDs, userID)
+    tipHelp.getResourceFullData(tipIDs)
       .then(data => res.json(data))
       .catch(err => err);
 

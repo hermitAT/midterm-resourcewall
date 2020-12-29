@@ -7,6 +7,7 @@ const ENV        = process.env.ENV || "development";
 const express    = require("express");
 const bodyParser = require("body-parser");
 const morgan     = require('morgan');
+const cors       = require('cors');
 const app        = express();
 
 // PG database client/connection setup
@@ -21,6 +22,7 @@ exports.db = db;
 // 'dev' = Concise output colored by response status for development use.
 //         The :status token will be colored red for server error codes, yellow for client error codes, cyan for redirection codes, and uncolored for all other codes.
 app.use( morgan('dev') );
+app.use(cors());
 
 app.use( bodyParser.json() );
 app.use( bodyParser.urlencoded({ extended: true }) );

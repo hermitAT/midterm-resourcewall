@@ -18,31 +18,19 @@ const getResourceFullData = function(arr, userID) {
   return Promise.all(arr.map(resource_id => {
     const queryString = `
     SELECT a.*, users.name AS creator_name,
-      (SELECT COUNT(likes.id)
-      FROM likes
-      WHERE resource_id = a.id) AS likes,
       (SELECT ARRAY_AGG(likes.user_id)
       FROM likes
-      WHERE resource_id = a.id) AS liked_by,
+      WHERE resource_id = a.id) AS likes,
       (SELECT ARRAY_AGG(bookmarks.user_id)
       FROM bookmarks
-      WHERE resource_id = a.id) AS bookmarked_by,
-      (SELECT COUNT(comments.id)
-      FROM comments
-      WHERE resource_id = a.id) AS comments_count,
+      WHERE resource_id = a.id) AS bookmarks,
       (SELECT ARRAY_AGG(comments.id)
       FROM comments
       WHERE resource_id = a.id) AS comments,
       (SELECT STRING_AGG(tag, ' ')
       FROM resources_tags
       JOIN tags ON tag_id = tags.id
-      WHERE resource_id = a.id) AS tags,
-      (SELECT likes.id
-      FROM likes
-      WHERE user_id = $2 AND resource_id = a.id) AS is_liked,
-      (SELECT bookmarks.id
-      FROM bookmarks
-      WHERE user_id = $2 AND resource_id = a.id) AS is_bookmarked
+      WHERE resource_id = a.id) AS tags
     FROM resources a
     JOIN users ON creator_id = users.id
     WHERE a.id = $1;

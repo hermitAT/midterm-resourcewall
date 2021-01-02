@@ -41,7 +41,10 @@ exports.findUserByEmail = findUserByEmail;
 const findUserByID = (id) => {
 
   queryString = `
-    SELECT *
+    SELECT id, name, email,
+      (SELECT ARRAY_AGG(resource_id) FROM likes WHERE user_id = $1) AS likes,
+      (SELECT ARRAY_AGG(resource_id) FROM bookmarks WHERE user_id = $1) AS bookmarks,
+      (SELECT ARRAY_AGG(id) FROM resources WHERE creator_id = $1) AS created_tips
     FROM users
     WHERE id = $1;
     `;
@@ -50,7 +53,7 @@ const findUserByID = (id) => {
     .then(data => data.rows[0])
     .catch(err => console.error('Query error', err.stack));
 };
-exports.findUserByID = findUserByID;
+exports.getUserData = findUserByID;
 
 /*
 * Create a new user object in the database with their provided their name, email and password
@@ -71,11 +74,3 @@ const newUser = (userDetails) => {
 
 };
 exports.newUser = newUser;
-
-const passwordCheck = (password, user) => {
-  if (!bcrypt.compareSync(password, user.password)) {
-    return false;
-  }
-  return true;
-};
-exports.passwordCheck = passwordCheck;

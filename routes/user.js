@@ -34,11 +34,19 @@ module.exports = (db) => {
     const { email, password } = req.body;
     return helpers.findUserByEmail(email)
       .then(user => {
-        if (helpers.passwordCheck(password, user)) {
-          console.log("Success! User logged in.");3
-          res.json({ user });
+        if (!user) {
+          res.json({ error: "There is no user registered under that email!"})
+        } else if (bcrypt.compareSync(password, user.password)) {
+          console.log("Success! Password accepted.");
+          return user;
+        } else {
+          res.json({ error: "Password not accepted!"});
         }
       })
+      .then(user => {
+        return helpers.getUserData(user.id)
+      })
+      .then(user => res.json(user))
       .catch(err => {
         res.status(500).json({ error: err.message });
       });
